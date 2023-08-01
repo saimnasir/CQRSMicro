@@ -23,6 +23,14 @@ namespace CQRSMicro.Product.Controllers
         //    return Ok(allProducts);
         //}
 
+
+        [HttpGet("id")]
+        public async Task<IActionResult> GetAsync([FromQuery] GetByIdProductQueryRequest requestModel)
+        {
+            var product = await Mediator.Send(requestModel);
+            return Ok(product);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] CreateProductCommandRequest requestModel)
         {

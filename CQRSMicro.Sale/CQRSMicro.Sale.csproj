@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\CQRSMicro.Domain\CQRSMicro.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
   </ItemGroup>
 
 </Project>

@@ -17,12 +17,12 @@ using Patika.Framework.Utilities.Queue.Services;
 using CQRSMicro.Domain.Logger;
 using CQRSMicro.Domain.DbContexts;
 using CQRSMicro.Domain.DbContexts.Interfaces.UnitOfWork;
-using CQRSMicro.Product.DBContext;
-using CQRSMicro.Product.DBContext.Interfaces;
-using CQRSMicro.Product.DBContext.Services;
-using CQRSMicro.Product.CQRS.Handlers;
+using CQRSMicro.Sale.DBContext.Interfaces;
+using CQRSMicro.Sale.DBContext.Services;
+using CQRSMicro.Sale.DBContext;
+using CQRSMicro.Sale.CQRS.Handlers;
+using CQRSMicro.Sale.QueConsumers;
 using CQRSMicro.Domain.Models;
-using CQRSMicro.Product.QueConsumers;
 
 namespace CQRSMicro.Product
 {
@@ -125,13 +125,15 @@ namespace CQRSMicro.Product
             services.AddScoped<ILogRepository, LogRepository>();
             services.AddScoped<ILogWriter, LogWriter>();
 
-            services.AddScoped<IProductCUDRepository, ProductCUDRepository>();
+            services.AddScoped<ISaleCUDRepository, SaleCUDRepository>();
+            services.AddScoped<ISaleQueryRepository, SaleQueryRepository>();
             services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
+            services.AddScoped<IProductCUDRepository, ProductCUDRepository>();
         }
 
         private void AddDatabases(IServiceCollection services)
         {
-            services.AddDbContextPool<ProductDbContext>((sp, opt) =>
+            services.AddDbContextPool<SaleDbContext>((sp, opt) =>
             {
                 var connectionString = sp.GetService<Configuration>()?.RDBMSConnectionStrings.Single(m => m.Name.Equals(DbConnectionNames.Main)).FullConnectionString ?? "";
                 opt.UseMySQL(connectionString);
@@ -143,14 +145,14 @@ namespace CQRSMicro.Product
                 opt.UseMySQL(connectionString);
             }, poolSize: 4);
 
-            services.AddScoped<IUnitOfWorkHostWithInterface, ProductDbContext>();
+            services.AddScoped<IUnitOfWorkHostWithInterface, SaleDbContext>();
         }
         private static void AddApplicationServices(IServiceCollection services)
         {
             services.AddScoped<IClientInformationService, ClientInformationService>();
             //services.AddTransient<GetAllProductQueryHandler>();
             //services.AddTransient<GetByIdProductQueryHandler>();
-            services.AddTransient<CreateProductCommandHandler>();
+            services.AddTransient<CreateSaleCommandHandler>();
             //services.AddTransient<DeleteProductCommandHandler>();
         }
         private void AddQueueServices(IServiceCollection services)
@@ -159,8 +161,9 @@ namespace CQRSMicro.Product
             Configuration.GetSection("QueueConfiguration").Bind(config);
             services.AddQueue(config);
 
-            services.AddScoped<IProducerService<Guid>, ProducerService<Guid>>(); 
-            services.AddTransient<IConsumerService<ProductSoldModel>, ProductSoldConsumer>();            
+            services.AddScoped<IProducerService<Guid>, ProducerService<Guid>>();
+            services.AddScoped<IProducerService<ProductSoldModel>, ProducerService<ProductSoldModel>>();
+            services.AddTransient<IConsumerService<string>, ProductCreatedConsumer>();
         }
         private void AddConfigurations(IServiceCollection services)
         {
