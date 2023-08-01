@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Patika.Framework.Shared" Version="0.0.7.3" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.12" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.7" />
+	</ItemGroup>
+</Project>
