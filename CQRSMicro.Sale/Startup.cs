@@ -129,6 +129,7 @@ namespace CQRSMicro.Product
             services.AddScoped<ISaleQueryRepository, SaleQueryRepository>();
             services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
             services.AddScoped<IProductCUDRepository, ProductCUDRepository>();
+            services.AddScoped<ICustomerCUDRepository, CustomerCUDRepository>();
         }
 
         private void AddDatabases(IServiceCollection services)
@@ -164,6 +165,7 @@ namespace CQRSMicro.Product
             services.AddScoped<IProducerService<Guid>, ProducerService<Guid>>();
             services.AddScoped<IProducerService<ProductSoldModel>, ProducerService<ProductSoldModel>>();
             services.AddTransient<IConsumerService<string>, ProductCreatedConsumer>();
+            services.AddTransient<IConsumerService<string>, CustomerCreatedConsumer>();
         }
         private void AddConfigurations(IServiceCollection services)
         {
