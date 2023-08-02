@@ -10,6 +10,6 @@ namespace CQRSMicro.Domain.Consts
     {
         public static string ProductCreated = nameof(ProductCreated);
         public static string ProductSold = nameof(ProductSold);
-        public static string ProductSold2 = nameof(ProductSold2);
+        public static string CustomerCreated = nameof(CustomerCreated); 
     }
 }
