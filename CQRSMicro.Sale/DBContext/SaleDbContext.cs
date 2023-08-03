@@ -13,5 +13,6 @@ namespace CQRSMicro.Sale.DBContext
         public DbSet<Entities.Sale> Sales { get; set; } = default!;
         public DbSet<Entities.Product> Products { get; set; } = default!;
         public DbSet<Entities.Customer> Customers { get; set; } = default!;
+        public DbSet<Entities.SaleReport> SaleReports { get; set; } = default!;
     }
 }
