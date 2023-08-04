@@ -4,23 +4,24 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://localhost:8003",
-      "sslPort": 44365
+      "applicationUrl": "http://localhost:7001",
+      "sslPort": 44313
     }
   },
   "profiles": {
-    "CQRSMicro.Sale": {
+    "CQRSMicro.Gateway": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:8003",
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:7001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
+      "launchBrowser": true, 
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

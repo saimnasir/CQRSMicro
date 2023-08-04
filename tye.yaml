@@ -1,0 +1,50 @@
+name: Koctas.Ustabilir
+services:
+
+## Services
+- name: Customer-Api
+  project: CQRSMicro.CustomerApp/CQRSMicro.CustomerApp.csproj
+  bindings:
+  - port: 8001
+    protocol: https
+  env:
+    - name: DOTNET_ENVIRONMENT
+      value: "Development"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Development"
+
+      
+- name: Product-Api
+  project: CQRSMicro.Product/CQRSMicro.Product.csproj
+  bindings:
+  - port: 8002
+    protocol: https
+  env:
+    - name: DOTNET_ENVIRONMENT
+      value: "Development"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Development"
+
+- name: Sale-Api
+  project: CQRSMicro.Sale/CQRSMicro.Sale.csproj
+  bindings:
+  - port: 8003
+    protocol: https
+  env:
+    - name: DOTNET_ENVIRONMENT
+      value: "Development"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Development"
+
+## Gateways   
+- name: Public-Gateway
+  project: CQRSMicro.Gateway/CQRSMicro.Gateway.csproj
+  bindings:
+  - port: 7001
+    protocol: https
+  env:
+    - name: DOTNET_ENVIRONMENT
+      value: "Development"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Development"
+ 

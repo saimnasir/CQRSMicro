@@ -40,6 +40,7 @@ namespace CQRSMicro.CustomerApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvcCore().AddApiExplorer();
             AddServices(services);
             SetupCORS(services);
         }
@@ -52,10 +53,9 @@ namespace CQRSMicro.CustomerApp
             services.AddControllers();
             services
               .AddControllersWithViews()
-              .AddViewLocalization()
-              .AddDataAnnotationsLocalization()
               .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
+            services.AddRouting(o => o.LowercaseUrls = true);
             AddSwagger(services);
 
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());                        
@@ -66,56 +66,57 @@ namespace CQRSMicro.CustomerApp
         {
             services.AddSwaggerGenNewtonsoftSupport();
 
-            //if (!Environment.IsDevelopment())
+            services.AddSwaggerGen(c =>
             {
-                services.AddSwaggerGen(c =>
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                    {
-                        In = ParameterLocation.Header,
-                        Name = "Authorization",
-                        Description = "Example: \"Bearer {token}\"",
-                        Type = SecuritySchemeType.ApiKey
-                    });
-                    c.DocInclusionPredicate((name, api) => true);
-                    c.TagActionsBy(api =>
-                    {
-                        if (api.GroupName != null)
-                        {
-                            return new[] { api.GroupName };
-                        }
-
-                        if (api.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
-                        {
-                            return new[] { controllerActionDescriptor.ControllerName };
-                        }
-
-                        throw new InvalidOperationException("Unable to determine tag for endpoint.");
-                    });
-                    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-                    c.SwaggerDoc("v1", new OpenApiInfo
-                    {
-                        Version = "v1",
-                        Title = "TPI Global Web Portal Api",
-                        Description = "TPI Global Web Portal Api"
-                        //TermsOfService = new Uri("https://example.com/terms"),
-                        //Contact = new OpenApiContact
-                        //{
-                        //    Name = "Example Contact",
-                        //    Url = new Uri("https://example.com/contact")
-                        //},
-                        //License = new OpenApiLicense
-                        //{
-                        //    Name = "Example License",
-                        //    Url = new Uri("https://example.com/license")
-                        //}
-                    });
-
-                    // using System.Reflection;
-                    //var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                    //c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                    In = ParameterLocation.Header,
+                    BearerFormat = "JWT",
+                    Name = "Authorization",
+                    Description = "Example: \"Bearer {token}\"",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
                 });
-            }
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+                c.DocInclusionPredicate((name, api) => true);
+                c.TagActionsBy(api =>
+                {
+                    if (api.GroupName != null)
+                    {
+                        return new[] { api.GroupName };
+                    }
+
+                    if (api.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+                    {
+                        return new[] { controllerActionDescriptor.ControllerName };
+                    }
+
+                    throw new InvalidOperationException("Unable to determine tag for endpoint.");
+                });
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Customer API",
+                    Description = "Customer App Web Server API"
+                });
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
         }
 
         private void AddRepositories(IServiceCollection services)
@@ -210,6 +211,7 @@ namespace CQRSMicro.CustomerApp
             //}
 
             app.UseForwardedHeaders();
+            ConfigurationEvents.NewConfiguration(app.ApplicationServices.GetRequiredService<Configuration>());
 
             UseSwagger(app, env);
 
@@ -224,8 +226,11 @@ namespace CQRSMicro.CustomerApp
 
             app.UseEndpoints(endpoints =>
             {
+                ////endpoints.MapControllers();
+                //endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+               // endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
             });
         }
 
@@ -234,26 +239,12 @@ namespace CQRSMicro.CustomerApp
         {
             app.UseSwagger();
 
-            ConfigurationEvents.NewConfiguration(app.ApplicationServices.GetRequiredService<Configuration>());
-
-            if (env.IsDevelopment())
+            app.UseSwaggerUI(options =>
             {
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                    options.RoutePrefix = string.Empty;
-                });
-            }
-            else
-            {
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/Prod/swagger/v1/swagger.json", "v1");
-                    options.RoutePrefix = string.Empty;
-                });
-            }
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer Api");
+                options.RoutePrefix = string.Empty;
+            });
 
-            app.UseDeveloperExceptionPage();
         }
     }
 }

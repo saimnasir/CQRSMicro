@@ -7,7 +7,7 @@ using Patika.Framework.Shared.Controllers;
 namespace CQRSMicro.Sale.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("api/sale/[controller]")]
     public class SaleController : GenericApiController
     {
         IMediator Mediator { get; }

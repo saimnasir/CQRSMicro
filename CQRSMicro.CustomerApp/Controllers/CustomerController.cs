@@ -7,7 +7,7 @@ using Patika.Framework.Shared.Controllers;
 namespace CQRSMicro.Customer.Controllers
 {
 
-    [Route("[controller]")]
+    [Route("api/customer/[controller]")]
     public class CustomerController : GenericApiController
     {
         IMediator Mediator { get; }
@@ -24,7 +24,8 @@ namespace CQRSMicro.Customer.Controllers
         //}
 
 
-        [HttpGet("id")]
+        [HttpGet]
+        [Route("id")]
         public async Task<IActionResult> GetAsync([FromQuery] GetByIdCustomerQueryRequest requestModel)
         {
             var Customer = await Mediator.Send(requestModel);
