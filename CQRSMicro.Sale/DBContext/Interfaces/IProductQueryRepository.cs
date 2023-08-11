@@ -1,8 +1,8 @@
-﻿using CQRSMicro.Domain.DbContexts.Interfaces.Repositories;
+﻿using Patika.Framework.Domain.Interfaces.Repository;
 
 namespace CQRSMicro.Sale.DBContext.Interfaces
 {
-    public interface IProductQueryRepository : IBaseQueryRepository<Entities.Product, Guid>
+    public interface IProductQueryRepository : IGenericDapperRepository<Entities.Product, Guid>
     {
     }
 }

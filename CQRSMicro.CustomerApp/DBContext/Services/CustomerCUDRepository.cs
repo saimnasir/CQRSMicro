@@ -1,11 +1,10 @@
-﻿using CQRSMicro.CustomerApp.DBContext;
-using CQRSMicro.CustomerApp.DBContext.Interfaces;
-using CQRSMicro.Domain.DbContexts.Services;
+﻿using CQRSMicro.CustomerApp.DBContext.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Patika.Framework.Domain.Services;
 
 namespace CQRSMicro.CustomerApp.DBContext.Services
 {
-    public class CustomerCUDRepository : BaseCUDRepository<Entities.Customer, CustomerDbContext, Guid>, ICustomerCUDRepository
+    public class CustomerCUDRepository : GenericRepository<Entities.Customer, CustomerDbContext, Guid>, ICustomerCUDRepository
     {
         public CustomerCUDRepository(DbContextOptions<CustomerDbContext> options) : base(options)
         {

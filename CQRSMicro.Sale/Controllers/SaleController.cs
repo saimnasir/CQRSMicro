@@ -1,5 +1,4 @@
 ﻿using CQRSMicro.Sale.CQRS.Commands.Request;
-using CQRSMicro.Sale.CQRS.Queries.Request;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Patika.Framework.Shared.Controllers;

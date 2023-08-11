@@ -1,17 +1,26 @@
-﻿using CQRSMicro.Domain.DbContexts.Services;
-using CQRSMicro.Product.DBContext.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using CQRSMicro.Product.DBContext.Interfaces;
+using Dapper;
+using Patika.Framework.Domain.Services;
+using Patika.Framework.Shared.Extensions;
+using Patika.Framework.Shared.Services;
+using System.Data;
 
 namespace CQRSMicro.Product.DBContext.Services
 {
-    public class ProductQueryRepository : BaseQueryRepository<Entities.Product, ProductDbContext, Guid>, IProductQueryRepository
+    public class ProductQueryRepository : GenericDapperRepository<Entities.Product, Guid>, IProductQueryRepository
     {
-        public ProductQueryRepository(DbContextOptions<ProductDbContext> options) : base(options)
+        public ProductQueryRepository(string connectionString, IServiceProvider serviceProvider) : base(connectionString, serviceProvider)
         {
         }
 
-        protected override ProductDbContext GetContext() => new(DbOptions);
+        protected override PagedResult<Entities.Product> GetPagedResultWithIncludes(IDbConnection dbConnection) => dbConnection.GetPagedResult<Entities.Product>(
+                                                                                                                SqlQueryBuilderGenerator
+                                                                                                                .GenerateQueryBuilder<Entities.Product>()
+                                                                                                                .PaginateQuery(null, 10)
+                                                                                                                .ToString()
+                                                                                                            ).GetAwaiter().GetResult();
 
-        protected override IQueryable<Entities.Product> GetDbSetWithIncludes(DbContext ctx) => ctx.Set<Entities.Product>();
+        protected override IQueryable<Entities.Product> GetQueryWithIncludes(IDbConnection dbConnection) => dbConnection.Query<Entities.Product>(SqlQueryBuilderGenerator.GenerateQueryBuilder<Entities.Product>().ToString()).AsQueryable();
+
     }
 }

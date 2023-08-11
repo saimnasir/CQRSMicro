@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.DependencyInjection;
 using MySql.EntityFrameworkCore.Extensions;
 
 namespace CQRSMicro.Product

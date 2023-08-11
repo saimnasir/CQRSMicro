@@ -1,5 +1,5 @@
-﻿using CQRSMicro.Domain.DbContexts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Patika.Framework.Domain.Services;
 
 namespace CQRSMicro.Product.DBContext
 {

@@ -4,7 +4,6 @@ using CQRSMicro.Product.DBContext.Interfaces;
 using DotNetCore.CAP;
 using Patika.Framework.Shared.Extensions;
 using Patika.Framework.Shared.Interfaces;
-using Patika.Framework.Shared.Services;
 using Patika.Framework.Utilities.Queue.Models.DTO;
 using Patika.Framework.Utilities.Queue.Services;
 

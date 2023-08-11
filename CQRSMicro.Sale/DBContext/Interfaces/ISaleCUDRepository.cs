@@ -1,8 +1,8 @@
-﻿using CQRSMicro.Domain.DbContexts.Interfaces.Repositories;
+﻿using Patika.Framework.Domain.Interfaces.Repository;
 
 namespace CQRSMicro.Sale.DBContext.Interfaces
 {
-    public interface ISaleCUDRepository : IBaseCUDRepository<Entities.Sale, Guid>
+    public interface ISaleCUDRepository : IGenericRepository<Entities.Sale, Guid>
     {
     }
 }

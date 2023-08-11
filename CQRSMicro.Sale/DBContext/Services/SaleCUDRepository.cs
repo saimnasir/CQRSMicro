@@ -1,11 +1,10 @@
-﻿using CQRSMicro.Domain.DbContexts.Services;
-using CQRSMicro.Sale.DBContext;
-using CQRSMicro.Sale.DBContext.Interfaces;
+﻿using CQRSMicro.Sale.DBContext.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Patika.Framework.Domain.Services;
 
 namespace CQRSMicro.Sale.DBContext.Services
 {
-    public class SaleCUDRepository : BaseCUDRepository<Entities.Sale, SaleDbContext, Guid>, ISaleCUDRepository
+    public class SaleCUDRepository : GenericRepository<Entities.Sale, SaleDbContext, Guid>, ISaleCUDRepository
     {
         public SaleCUDRepository(DbContextOptions<SaleDbContext> options) : base(options)
         {

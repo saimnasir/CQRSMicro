@@ -14,15 +14,18 @@ using Patika.Framework.Shared.Services;
 using Patika.Framework.Utilities.Queue.Extensions;
 using Patika.Framework.Utilities.Queue.Interfaces;
 using Patika.Framework.Utilities.Queue.Services;
-using CQRSMicro.Domain.Logger;
-using CQRSMicro.Domain.DbContexts;
-using CQRSMicro.Domain.DbContexts.Interfaces.UnitOfWork;
 using CQRSMicro.Product.DBContext;
 using CQRSMicro.Product.DBContext.Interfaces;
 using CQRSMicro.Product.DBContext.Services;
 using CQRSMicro.Product.CQRS.Handlers;
 using CQRSMicro.Domain.Models;
 using CQRSMicro.Product.QueConsumers;
+using Patika.Framework.Domain.Interfaces.UnitOfWork;
+using Patika.Framework.Domain.Interfaces.Repository;
+using Patika.Framework.Domain.Services;
+using Patika.Framework.Domain.LogDbContext;
+using Patika.Framework.Shared.Services.DbConnectionGenerators;
+using Patika.Framework.Shared.Services.SqlBuilderGenerators;
 
 namespace CQRSMicro.Product
 {
@@ -127,7 +130,12 @@ namespace CQRSMicro.Product
             services.AddScoped<ILogWriter, LogWriter>();
 
             services.AddScoped<IProductCUDRepository, ProductCUDRepository>();
-            services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
+            services.AddScoped<IProductQueryRepository>(sp => new ProductQueryRepository(GetConnectionString(DbConnectionNames.Main), sp));
+        }
+
+        private string GetConnectionString(string name)
+        {
+            return AppConfiguration.RDBMSConnectionStrings.Single(m => m.Name.Equals(name)).FullConnectionString ?? "";
         }
 
         private void AddDatabases(IServiceCollection services)
@@ -145,6 +153,9 @@ namespace CQRSMicro.Product
             }, poolSize: 4);
 
             services.AddScoped<IUnitOfWorkHostWithInterface, ProductDbContext>();
+
+            services.AddSingleton<IDbConnectionGenerator, MySqlConnectionGenerator>();
+            services.AddSingleton<ISqlQueryBuilderGenerator, MySqlQueryBuilderGenerator>();
         }
         private static void AddApplicationServices(IServiceCollection services)
         {

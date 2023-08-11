@@ -14,13 +14,16 @@ using Patika.Framework.Shared.Services;
 using Patika.Framework.Utilities.Queue.Extensions;
 using Patika.Framework.Utilities.Queue.Interfaces;
 using Patika.Framework.Utilities.Queue.Services;
-using CQRSMicro.Domain.Logger;
 using CQRSMicro.CustomerApp.CQRS.Handlers;
 using CQRSMicro.CustomerApp.DBContext;
-using CQRSMicro.Domain.DbContexts;
-using CQRSMicro.Domain.DbContexts.Interfaces.UnitOfWork;
 using CQRSMicro.CustomerApp.DBContext.Interfaces;
 using CQRSMicro.CustomerApp.DBContext.Services;
+using Patika.Framework.Domain.Interfaces.UnitOfWork;
+using Patika.Framework.Domain.Interfaces.Repository;
+using Patika.Framework.Domain.Services;
+using Patika.Framework.Domain.LogDbContext;
+using Patika.Framework.Shared.Services.DbConnectionGenerators;
+using Patika.Framework.Shared.Services.SqlBuilderGenerators;
 
 namespace CQRSMicro.CustomerApp
 {
@@ -125,7 +128,12 @@ namespace CQRSMicro.CustomerApp
             services.AddScoped<ILogWriter, LogWriter>();
 
             services.AddScoped<ICustomerCUDRepository, CustomerCUDRepository>();
-            services.AddScoped<ICustomerQueryRepository, CustomerQueryRepository>();
+            services.AddScoped<ICustomerQueryRepository>(sp => new CustomerQueryRepository(GetConnectionString(DbConnectionNames.Main), sp));
+        }
+
+        private string GetConnectionString(string name)
+        {
+            return AppConfiguration.RDBMSConnectionStrings.Single(m => m.Name.Equals(name)).FullConnectionString ?? "";
         }
 
         private void AddDatabases(IServiceCollection services)
@@ -143,6 +151,9 @@ namespace CQRSMicro.CustomerApp
             }, poolSize: 4);
 
             services.AddScoped<IUnitOfWorkHostWithInterface, CustomerDbContext>();
+
+            services.AddSingleton<IDbConnectionGenerator, MySqlConnectionGenerator>();
+            services.AddSingleton<ISqlQueryBuilderGenerator, MySqlQueryBuilderGenerator>();
         }
         private static void AddApplicationServices(IServiceCollection services)
         {
@@ -228,7 +239,7 @@ namespace CQRSMicro.CustomerApp
             {
                 ////endpoints.MapControllers();
                 //endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-               // endpoints.MapRazorPages();
+                // endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapDefaultControllerRoute();
             });

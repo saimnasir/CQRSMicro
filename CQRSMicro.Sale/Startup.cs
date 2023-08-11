@@ -14,15 +14,18 @@ using Patika.Framework.Shared.Services;
 using Patika.Framework.Utilities.Queue.Extensions;
 using Patika.Framework.Utilities.Queue.Interfaces;
 using Patika.Framework.Utilities.Queue.Services;
-using CQRSMicro.Domain.Logger;
-using CQRSMicro.Domain.DbContexts;
-using CQRSMicro.Domain.DbContexts.Interfaces.UnitOfWork;
 using CQRSMicro.Sale.DBContext.Interfaces;
 using CQRSMicro.Sale.DBContext.Services;
 using CQRSMicro.Sale.DBContext;
 using CQRSMicro.Sale.CQRS.Handlers;
 using CQRSMicro.Sale.QueConsumers;
 using CQRSMicro.Domain.Models;
+using Patika.Framework.Domain.Interfaces.UnitOfWork;
+using Patika.Framework.Domain.Interfaces.Repository;
+using Patika.Framework.Domain.Services;
+using Patika.Framework.Domain.LogDbContext;
+using Patika.Framework.Shared.Services.DbConnectionGenerators;
+using Patika.Framework.Shared.Services.SqlBuilderGenerators;
 
 namespace CQRSMicro.Product
 {
@@ -128,13 +131,17 @@ namespace CQRSMicro.Product
             services.AddScoped<ILogWriter, LogWriter>();
 
             services.AddScoped<ISaleCUDRepository, SaleCUDRepository>();
-            services.AddScoped<ISaleQueryRepository, SaleQueryRepository>();
-            services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
+            services.AddScoped<ISaleQueryRepository>(sp => new SaleQueryRepository(GetConnectionString(DbConnectionNames.Main), sp));
+            services.AddScoped<IProductQueryRepository>(sp => new ProductQueryRepository(GetConnectionString(DbConnectionNames.Main), sp));
             services.AddScoped<IProductCUDRepository, ProductCUDRepository>();
             services.AddScoped<ICustomerCUDRepository, CustomerCUDRepository>();
             services.AddScoped<ISaleReportCUDRepository, SaleReportCUDRepository>();
         }
 
+        private string GetConnectionString(string name)
+        {
+            return AppConfiguration.RDBMSConnectionStrings.Single(m => m.Name.Equals(name)).FullConnectionString ?? "";
+        }
         private void AddDatabases(IServiceCollection services)
         {
             services.AddDbContextPool<SaleDbContext>((sp, opt) =>
@@ -150,6 +157,9 @@ namespace CQRSMicro.Product
             }, poolSize: 4);
 
             services.AddScoped<IUnitOfWorkHostWithInterface, SaleDbContext>();
+
+            services.AddSingleton<IDbConnectionGenerator, MySqlConnectionGenerator>();
+            services.AddSingleton<ISqlQueryBuilderGenerator, MySqlQueryBuilderGenerator>();
         }
         private static void AddApplicationServices(IServiceCollection services)
         {
