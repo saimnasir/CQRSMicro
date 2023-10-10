@@ -12,7 +12,7 @@ namespace CQRSMicro.CustomerApp.DBContext.Services
 
         protected override CustomerDbContext GetContext() => new(DbOptions);
 
-        protected override IQueryable<Entities.Customer> GetDbSetWithIncludes(DbContext ctx) => ctx.Set<Entities.Customer>();
+        protected override IQueryable<Entities.Customer> GetDbSetWithIncludes(CustomerDbContext ctx) => ctx.Set<Entities.Customer>();
 
     }
 }

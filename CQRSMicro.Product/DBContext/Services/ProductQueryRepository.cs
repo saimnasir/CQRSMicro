@@ -13,14 +13,14 @@ namespace CQRSMicro.Product.DBContext.Services
         {
         }
 
-        protected override PagedResult<Entities.Product> GetPagedResultWithIncludes(IDbConnection dbConnection) => dbConnection.GetPagedResult<Entities.Product>(
-                                                                                                                SqlQueryBuilderGenerator
-                                                                                                                .GenerateQueryBuilder<Entities.Product>()
-                                                                                                                .PaginateQuery(null, 10)
-                                                                                                                .ToString()
-                                                                                                            ).GetAwaiter().GetResult();
+        //protected override PagedResult<Entities.Product> GetPagedResultWithIncludes(IDbConnection dbConnection) => dbConnection.GetPagedResult<Entities.Product>(
+        //                                                                                                        SqlQueryBuilderGenerator
+        //                                                                                                        .GenerateQueryBuilder<Entities.Product>()
+        //                                                                                                        .PaginateQuery(null, 10)
+        //                                                                                                        .ToString()
+        //                                                                                                    ).GetAwaiter().GetResult();
 
-        protected override IQueryable<Entities.Product> GetQueryWithIncludes(IDbConnection dbConnection) => dbConnection.Query<Entities.Product>(SqlQueryBuilderGenerator.GenerateQueryBuilder<Entities.Product>().ToString()).AsQueryable();
+        //protected override IQueryable<Entities.Product> GetQueryWithIncludes(IDbConnection dbConnection) => dbConnection.Query<Entities.Product>(SqlQueryBuilderGenerator.GenerateQueryBuilder<Entities.Product>().ToString()).AsQueryable();
 
     }
 }

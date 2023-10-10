@@ -12,7 +12,7 @@ namespace CQRSMicro.Sale.DBContext.Services
 
         protected override SaleDbContext GetContext() => new(DbOptions);
 
-        protected override IQueryable<Entities.Product> GetDbSetWithIncludes(DbContext ctx) => ctx.Set<Entities.Product>();
+        protected override IQueryable<Entities.Product> GetDbSetWithIncludes(SaleDbContext ctx) => ctx.Set<Entities.Product>();
 
     }
 }

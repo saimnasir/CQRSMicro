@@ -2,7 +2,7 @@
 
 namespace CQRSMicro.Sale.DBContext.Interfaces
 {
-    public interface ISaleQueryRepository : IGenericDapperRepository<Entities.Sale, Guid>
+    public interface ISaleQueryRepository : IGenericQueryRepository<Entities.Sale, Guid>
     {
     }
 }

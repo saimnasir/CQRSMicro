@@ -13,14 +13,14 @@ namespace CQRSMicro.Sale.DBContext.Services
         {
         }
 
-        protected override PagedResult<Entities.Sale> GetPagedResultWithIncludes(IDbConnection dbConnection) => dbConnection.GetPagedResult<Entities.Sale>(
-                                                                                                               SqlQueryBuilderGenerator
-                                                                                                               .GenerateQueryBuilder<Entities.Sale>()
-                                                                                                               .PaginateQuery(null, 10)
-                                                                                                               .ToString()
-                                                                                                           ).GetAwaiter().GetResult();
+        //protected override PagedResult<Entities.Sale> GetPagedResultWithIncludes(IDbConnection dbConnection) => dbConnection.GetPagedResult<Entities.Sale>(
+        //                                                                                                       SqlQueryBuilderGenerator
+        //                                                                                                       .GenerateQueryBuilder<Entities.Sale>()
+        //                                                                                                       .PaginateQuery(null, 10)
+        //                                                                                                       .ToString()
+        //                                                                                                   ).GetAwaiter().GetResult();
 
-        protected override IQueryable<Entities.Sale> GetQueryWithIncludes(IDbConnection dbConnection) => dbConnection.Query<Entities.Sale>(SqlQueryBuilderGenerator.GenerateQueryBuilder<Entities.Sale>().ToString()).AsQueryable();
+        //protected override IQueryable<Entities.Sale> GetQueryWithIncludes(IDbConnection dbConnection) => dbConnection.Query<Entities.Sale>(SqlQueryBuilderGenerator.GenerateQueryBuilder<Entities.Sale>().ToString()).AsQueryable();
 
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CQRSMicro.CustomerApp.DBContext.Interfaces
 {
-    public interface ICustomerQueryRepository : IGenericDapperRepository<Entities.Customer, Guid>
+    public interface ICustomerQueryRepository : IGenericQueryRepository<Entities.Customer, Guid>
     {
     }
 }
