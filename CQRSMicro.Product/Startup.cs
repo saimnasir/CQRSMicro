@@ -140,27 +140,27 @@ namespace CQRSMicro.Product
 
         private void AddDatabases(IServiceCollection services)
         {
-            services.AddDbContextPool<ProductDbContext>((sp, opt) =>
+            services.AddDbContext<ProductDbContext>((sp, opt) =>
             {
                 var connectionString = sp.GetService<Configuration>()?.RDBMSConnectionStrings.Single(m => m.Name.Equals(DbConnectionNames.Main)).FullConnectionString ?? "";
-                opt.UseMySQL(connectionString);
-            }, poolSize: 4);
+                opt.UseSqlite(connectionString);
+            });
 
             services.AddDbContextPool<LogDbContext>((sp, opt) =>
             {
                 var connectionString = sp.GetService<Configuration>()?.RDBMSConnectionStrings.Single(m => m.Name.Equals(DbConnectionNames.Log)).FullConnectionString ?? "";
-                opt.UseMySQL(connectionString);
+                opt.UseMySQL(connectionString, builder=> builder.MigrationsAssembly("CQRSMicro.Product"));
             }, poolSize: 4);
 
             services.AddScoped<IUnitOfWorkHostWithInterface, ProductDbContext>();
 
-            services.AddSingleton<IDbConnectionGenerator, MySqlConnectionGenerator>();
-            services.AddSingleton<ISqlQueryBuilderGenerator, MySqlQueryBuilderGenerator>();
+            services.AddSingleton<IDbConnectionGenerator, SqliteConnectionGenerator>();
+            services.AddSingleton<ISqlQueryBuilderGenerator, SqliteQueryBuilderGenerator>();
         }
         private static void AddApplicationServices(IServiceCollection services)
         {
             services.AddScoped<IClientInformationService, ClientInformationService>();
-            //services.AddTransient<GetAllProductQueryHandler>();
+            services.AddTransient<GetAllProductQueryHandler>();
             //services.AddTransient<GetByIdProductQueryHandler>();
             services.AddTransient<CreateProductCommandHandler>();
             //services.AddTransient<DeleteProductCommandHandler>();

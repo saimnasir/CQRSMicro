@@ -12,37 +12,44 @@ namespace CQRSMicro.Product.CQRS.Handlers
     public class CreateProductCommandHandler : CoreService, IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
     {
         IProductCUDRepository ProductCUDRepository { get; }
-      //  IProductDAOCUDRepository ProductDAOCUDRepository { get; }
+        //  IProductDAOCUDRepository ProductDAOCUDRepository { get; }
 
         IProducerService<Guid> ProductCreatedQueueService { get; }
         public CreateProductCommandHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             ProductCUDRepository = GetService<IProductCUDRepository>();
-          //  ProductDAOCUDRepository = GetService<IProductDAOCUDRepository>();
+            //  ProductDAOCUDRepository = GetService<IProductDAOCUDRepository>();
             ProductCreatedQueueService = GetService<IProducerService<Guid>>();
         }
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var id = Guid.NewGuid();
-            var product = await ProductCUDRepository.InsertOneAsync(new()
+            try
             {
-                Id = id,
-                Name = request.Name,
-                Price = request.Price,
-                Quantity = request.Quantity,
-                CreateTime = DateTime.Now
-            });
-            await ProductCreatedQueueService.PublishAsync(new QueueMessageDTO<Guid>
+                var id = Guid.NewGuid();
+                var product = await ProductCUDRepository.InsertOneAsync(new()
+                {
+                    Id = id,
+                    Name = request.Name,
+                    Price = request.Price,
+                    Quantity = request.Quantity,
+                    CreateTime = DateTime.Now
+                });
+                //await ProductCreatedQueueService.PublishAsync(new QueueMessageDTO<Guid>
+                //{
+                //    Message = product.Id,
+                //    QueueName = QueueConsts.ProductCreated,
+                //    LogId = request.LogId,
+                //});
+                return new CreateProductCommandResponse
+                {
+                    IsSuccess = true,
+                    ProductId = id
+                };
+            }
+            catch (Exception ex)
             {
-                Message = product.Id,
-                QueueName = QueueConsts.ProductCreated,
-                LogId = request.LogId,
-            });
-            return new CreateProductCommandResponse
-            {
-                IsSuccess = true,
-                ProductId = id
-            };
+                throw;
+            }
         }
     }
 }

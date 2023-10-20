@@ -16,12 +16,12 @@ namespace CQRSMicro.Product.Controllers
             Mediator = GetService<IMediator>();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> ListAsync([FromQuery] GetAllProductQueryRequest requestModel)
-        //{
-        //    var allProducts = await Mediator.Send(requestModel);
-        //    return Ok(allProducts);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> ListAsync([FromQuery] GetAllProductQueryRequest requestModel)
+        {
+            var allProducts = await Mediator.Send(requestModel);
+            return Ok(allProducts);
+        }
 
 
         [HttpGet("id")]

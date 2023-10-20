@@ -1,17 +1,17 @@
 name: Koctas.Ustabilir
 services:
 
-# ## Services
-# - name: Customer-Api
-#   project: CQRSMicro.CustomerApp/CQRSMicro.CustomerApp.csproj
-#   bindings:
-#   - port: 8001
-#     protocol: https
-#   env:
-#     - name: DOTNET_ENVIRONMENT
-#       value: "Development"
-#     - name: ASPNETCORE_ENVIRONMENT
-#       value: "Development"
+## Services
+- name: Customer-Api
+  project: CQRSMicro.CustomerApp/CQRSMicro.CustomerApp.csproj
+  bindings:
+  - port: 8001
+    protocol: https
+  env:
+    - name: DOTNET_ENVIRONMENT
+      value: "Development"
+    - name: ASPNETCORE_ENVIRONMENT
+      value: "Development"
 
       
 # - name: Product-Api
