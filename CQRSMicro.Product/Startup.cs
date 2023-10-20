@@ -26,7 +26,7 @@ using Patika.Framework.Domain.Services;
 using Patika.Framework.Domain.LogDbContext;
 using Patika.Framework.Shared.Services.DbConnectionGenerators;
 using Patika.Framework.Shared.Services.SqlBuilderGenerators;
-
+using AspNetCoreRateLimit;
 namespace CQRSMicro.Product
 {
     public class Startup
@@ -47,9 +47,40 @@ namespace CQRSMicro.Product
         {
             services.AddMvcCore().AddApiExplorer();
 
+            ConfigureIpRateLimiting(services);
             AddServices(services);
             SetupCORS(services);
         }
+
+        private void ConfigureIpRateLimiting(IServiceCollection services)
+        {
+            // needed to load configuration from appsettings.json
+            services.AddOptions();
+            // needed to store rate limit counters and ip rules
+            services.AddMemoryCache();
+            //load general configuration from appsettings.json
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            //load ip rules from appsettings.json
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            // inject counter and rules stores
+            services.AddInMemoryRateLimiting();
+            //services.AddDistributedRateLimiting<AsyncKeyLockProcessingStrategy>();
+            //services.AddDistributedRateLimiting<RedisProcessingStrategy>();
+            //services.AddRedisRateLimiting(); 
+
+            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        }  
+        //private void ConfigureIpRateLimits(IServiceCollection services)
+        //{
+        //    // ... other configurations
+
+        //    services.AddMemoryCache();
+        //    services.AddOptions();
+        //    services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+
+        //    services.AddInMemoryRateLimiting();
+        //}
         private void AddServices(IServiceCollection services)
         {
             AddConfigurations(services);
@@ -149,7 +180,7 @@ namespace CQRSMicro.Product
             services.AddDbContextPool<LogDbContext>((sp, opt) =>
             {
                 var connectionString = sp.GetService<Configuration>()?.RDBMSConnectionStrings.Single(m => m.Name.Equals(DbConnectionNames.Log)).FullConnectionString ?? "";
-                opt.UseMySQL(connectionString, builder=> builder.MigrationsAssembly("CQRSMicro.Product"));
+                opt.UseMySQL(connectionString, builder => builder.MigrationsAssembly("CQRSMicro.Product"));
             }, poolSize: 4);
 
             services.AddScoped<IUnitOfWorkHostWithInterface, ProductDbContext>();
@@ -229,6 +260,7 @@ namespace CQRSMicro.Product
             ConfigurationEvents.NewConfiguration(app.ApplicationServices.GetRequiredService<Configuration>());
 
             UseSwagger(app, env);
+            app.UseIpRateLimiting();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -236,6 +268,8 @@ namespace CQRSMicro.Product
 
             app.UseRouting();
             app.UseCors("corsapp");
+
+
             app.UseAuthentication();
             app.UseAuthorization();
 
