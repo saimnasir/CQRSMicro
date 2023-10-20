@@ -1,5 +1,6 @@
 ﻿using CQRSMicro.Product.CQRS.Commands.Request;
 using CQRSMicro.Product.CQRS.Queries.Request;
+using CQRSMicro.Product.Fuzzy;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Patika.Framework.Shared.Controllers;
@@ -37,5 +38,25 @@ namespace CQRSMicro.Product.Controllers
             var response = await Mediator.Send(requestModel);
             return Ok(response);
         }
+
+
+        [HttpGet("FuzzySharpSearch")]
+        public async Task<IActionResult> FuzzySharpSearchAsync([FromQuery] string key)
+        {
+            var fuzzy = new FuzzySharpSearch();
+            var response = fuzzy.SearchAll(key);
+            return Ok(response);
+        }
+
+
+        //[HttpGet("FuzzyStringSearch")]
+        //public async Task<IActionResult> FuzzyStringSearchAsync([FromQuery] string key)
+        //{
+        //    var fuzzy = new FuzzyStringSearch();
+        //    var response = fuzzy.SearchAll(key);
+        //    return Ok(response);
+        //}
+
+
     }
 }
