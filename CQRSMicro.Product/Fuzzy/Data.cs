@@ -8,10 +8,10 @@ namespace CQRSMicro.Product.Fuzzy
         {
             new Campaign
             {
-                CampaignType = "t1 x1",
-                Content = "c1 t1 x1",
-                Description = "x1",
-                Title = "x1",
+                CampaignType = "Bonus",
+                Content = "Arçelik Beko beko2 Bonus",
+                Description = "Arçelikten Bekodan beko2den Bonus ",
+                Title = "Arçeliğe Bekoya beko2ya Bonus",
                 CreatedAt = DateTime.UtcNow
             }
         };
@@ -20,10 +20,26 @@ namespace CQRSMicro.Product.Fuzzy
         {
             new Brand
             {
-                Name = "b1 x1",
-                About = "a1 b1 x1 ",
-                Sector = "s1 x1",
-                BrandType = "b1 t1",
+                Name = "Arçelik",
+                About = "Arçelik",
+                Sector = "Arçelik",
+                BrandType = "Arçelik",
+                CreatedAt = DateTime.UtcNow
+            },
+            new Brand
+            {
+                Name = "Beko",
+                About = "Beko",
+                Sector = "Beko",
+                BrandType = "Beko",
+                CreatedAt = DateTime.UtcNow
+            },
+            new Brand
+            {
+                Name = "Beko2",
+                About = "Beko2",
+                Sector = "Beko2",
+                BrandType = "Beko",
                 CreatedAt = DateTime.UtcNow
             }
         };
