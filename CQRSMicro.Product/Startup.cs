@@ -27,6 +27,9 @@ using Patika.Framework.Domain.LogDbContext;
 using Patika.Framework.Shared.Services.DbConnectionGenerators;
 using Patika.Framework.Shared.Services.SqlBuilderGenerators;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Builder.Extensions;
+using CQRSMicro.Domain;
+
 namespace CQRSMicro.Product
 {
     public class Startup
@@ -71,16 +74,7 @@ namespace CQRSMicro.Product
             // configuration (resolvers, counter key builders)
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }  
-        //private void ConfigureIpRateLimits(IServiceCollection services)
-        //{
-        //    // ... other configurations
-
-        //    services.AddMemoryCache();
-        //    services.AddOptions();
-        //    services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-
-        //    services.AddInMemoryRateLimiting();
-        //}
+         
         private void AddServices(IServiceCollection services)
         {
             AddConfigurations(services);
@@ -217,6 +211,7 @@ namespace CQRSMicro.Product
 
             services.AddSingleton(AuthenticationParams);
             AddAppConfiguration(services);
+            AddBlockedNumbersConfig(services);
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -230,6 +225,12 @@ namespace CQRSMicro.Product
             AppConfiguration = new Configuration();
             Configuration.GetSection("Configuration").Bind(AppConfiguration);
             services.AddSingleton(AppConfiguration);
+        }
+        private void AddBlockedNumbersConfig(IServiceCollection services)
+        {
+            var cfg = new BlockedNumbersConfig();
+            Configuration.GetSection("BlockedNumbersConfig").Bind(cfg);
+            services.AddSingleton(cfg);
         }
 
         private static void SetupCORS(IServiceCollection services)
@@ -269,6 +270,8 @@ namespace CQRSMicro.Product
             app.UseRouting();
             app.UseCors("corsapp");
 
+
+            app.UseMiddleware<OTPRateLimitMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

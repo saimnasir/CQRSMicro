@@ -3,6 +3,7 @@ using CQRSMicro.Product.CQRS.Queries.Request;
 using CQRSMicro.Product.Fuzzy;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Patika.Framework.Shared.Controllers;
 
 namespace CQRSMicro.Product.Controllers
@@ -39,6 +40,13 @@ namespace CQRSMicro.Product.Controllers
             return Ok(response);
         }
 
+        [HttpPost("mobile")]
+        [Produces("application/json")]
+        public async Task<IActionResult> SendOTPAsync([FromBody] SendOTPCommandRequest requestModel)
+        {
+            var response = await Mediator.Send(requestModel);
+            return Ok(response);
+        }
 
         [HttpGet("FuzzySharpSearch")]
         public async Task<IActionResult> FuzzySharpSearchAsync([FromQuery] string key)
