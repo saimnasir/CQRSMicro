@@ -5,10 +5,13 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<UserSecretsId>5639a838-1ae5-4365-97ac-18547a333103</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="12.1.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
