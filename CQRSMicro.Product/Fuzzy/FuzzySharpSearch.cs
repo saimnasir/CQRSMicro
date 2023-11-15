@@ -7,14 +7,16 @@ namespace CQRSMicro.Product.Fuzzy
     {
         public List<Tuple<string, int>> SearchCampaigns(string query)
         {
-            var campaignStrings =Data.Campaigns.Select(c => $"{c.Title} {c.Description} {c.Content}").ToList();
+           // var campaignStrings =Data.Campaigns.Select(c => $"{c.Title} {c.Description}").ToList();
+             var campaignStrings =Data.Campaigns.Select(c => $"{c.Title} {c.Description} {c.Content} {c.CampaignType} {c.Content}").ToList();
             var results = ProcessSearchQuery(query, campaignStrings);
             return results.Select(x => x).Take(10).ToList(); // İlk 10 sonucu döndür
         }
 
         public List<Tuple<string, int>> SearchBrands(string query)
         {
-            var brandStrings = Data.Brands.Select(b => $"{b.Name} {b.Sector}").ToList();
+            // var brandStrings = Data.Brands.Select(b => $"{b.Name} {b.Sector}").ToList();
+            var brandStrings = Data.Brands.Select(b => $"{b.Name} {b.Sector} {b.About} {b.BrandType}").ToList();
             var results = ProcessSearchQuery(query, brandStrings);
             return results.Select(x => x).Take(10).ToList(); // İlk 10 sonucu döndür
         }
