@@ -5,60 +5,6 @@ namespace CQRSMicro.Product.Fuzzy
 {
     public class FuzzySharpSearchCampaign
     {
-        //public List<SearchResultModel> SearchCampaigns(string query)
-        //{
-        //    // var campaignStrings =Data.Campaigns.Select(c => $"{c.Title} {c.Description}").ToList();
-        //    var campaignStrings = Data.Campaigns.Select(c => new SearchModel
-        //    {
-        //        QueryText = query,
-        //        BrandId = c.BrandId,
-        //        DataType = DataType.Campaign,
-        //        FuzzySearchString = $" {c.BrandId} {c.Title} {c.Description} {c.Content} {c.CampaignType} {c.Content}",
-
-        //    }).ToList();
-        //    var results = ProcessSearchQuery(query, campaignStrings);
-        //    return results.Select(x => x).Take(10).ToList(); // İlk 10 sonucu döndür
-        //}
-
-        //public List<SearchResultModel> SearchBrands(string query)
-        //{
-        //    var brandStrings = Data.Brands.Select(b => new SearchModel
-        //    {
-        //        QueryText = query,
-        //        BrandId = b.Id,
-        //        DataType = DataType.Campaign,
-        //        FuzzySearchString = $"{b.Id} {b.Name} {b.Sector} {b.About} {b.BrandType}"
-        //    }).ToList();
-        //    var results = ProcessSearchQuery(query, brandStrings);
-        //    return results.Select(x => x).Take(10).ToList(); // İlk 10 sonucu döndür
-        //}
-
-        //public List<SearchResultModel> ProcessSearchQuery(string query, List<SearchModel> items)
-        //{
-        //    var searchResults = new List<SearchResultModel>();
-        //    foreach (var item in items)
-        //    {
-        //        var score = Fuzz.PartialRatio(query, item.FuzzySearchString);
-        //        searchResults.Add(new SearchResultModel { FuzzySearchString = item.FuzzySearchString, Score = score });
-        //    }
-        //    // En yüksek skorları alarak sırala
-        //    searchResults = searchResults.OrderByDescending(x => x.Score).ToList();
-        //    return searchResults;
-        //}
-
-        //public List<string> SearchAll(string query)
-        //{
-        //    var campaignResults = SearchCampaigns(query);
-        //    var brandResults = SearchBrands(query);
-
-        //    var combinedResults = campaignResults.Concat(brandResults).ToList();
-
-        //    // En yüksek skorlarına göre sırala
-        //    combinedResults = combinedResults.OrderByDescending(x => FuzzySharp.Fuzz.PartialRatio(query, x.FuzzySearchString)).ToList();
-
-        //    var result = combinedResults.Select(x => x.FuzzySearchString).Take(10).ToList(); // İlk 10 sonucu döndür
-        //    return result;
-        //}
         public IEnumerable<SearchSuggestionModel> Suggestions(string query)
         {
             query = query.ToLower();
@@ -66,12 +12,12 @@ namespace CQRSMicro.Product.Fuzzy
             campaigns.ForEach(campaing =>
             {
                 campaing.Brand = Data.Brands.FirstOrDefault(b => b.Id == campaing.BrandId) ?? new Brand();
-            }); 
+            });
 
             var campaignSearchResult = SearchSuggestions(campaigns, query);
-            var orderedResults = campaignSearchResult.OrderByDescending(result => result.Score);
+            var orderedResults = campaignSearchResult.OrderByDescending(result => result.SearchResult.Score);
 
-            var result = orderedResults.Where(item => item.Score > 20).Take(10).ToList();
+            var result = orderedResults.Where(item => item.SearchResult.Score > 20).Take(10).ToList();
 
             return result;
         }
@@ -164,8 +110,7 @@ namespace CQRSMicro.Product.Fuzzy
                     CampaignScore = Fuzz.WeightedRatio(query, CampaignFuzzySearchString(campaign), FuzzySharp.PreProcess.PreprocessMode.Full),
                     BrandScore = Fuzz.WeightedRatio(query, BrandFuzzySearchString(campaign.Brand), FuzzySharp.PreProcess.PreprocessMode.Full),
                     MatchedPositionsCampaign = GetMatchedPositions(query, CampaignFuzzySearchString(campaign)),
-                    MatchedPositionsBrand = GetMatchedPositions(query, BrandFuzzySearchString(campaign.Brand)),
-                    DataType = DataType.Campaign
+                    MatchedPositionsBrand = GetMatchedPositions(query, BrandFuzzySearchString(campaign.Brand))
                 };
             });
             var campaigns = searches.Select(campaign =>
@@ -174,12 +119,18 @@ namespace CQRSMicro.Product.Fuzzy
                 {
                     Campaign = campaign.Campaign,
                     OverallScore = (campaign.CampaignScore + campaign.BrandScore) / 2,
-                    MatchedPositionsBrand = campaign.MatchedPositionsBrand,
-                    MatchedPositionsCampaign = campaign.MatchedPositionsCampaign,
-                    HighlightedCampaign = HighlightMatchedPart(campaign.CampaignSearchString, campaign.MatchedPositionsCampaign),
-                    HighlightedBrand = HighlightMatchedPart(campaign.BrandSearchString, campaign.MatchedPositionsBrand),
-                    CampaignScore = campaign.CampaignScore,
-                    BrandScore = campaign.BrandScore,
+                    BrandSearchResult = new SearchResult
+                    {
+                        MatchedPositions = campaign.MatchedPositionsBrand,
+                        Highlighted = HighlightMatchedPart(campaign.BrandSearchString, campaign.MatchedPositionsBrand),
+                        Score = campaign.BrandScore,
+                    },
+                    CampaignSearchResult = new SearchResult
+                    {
+                        MatchedPositions = campaign.MatchedPositionsCampaign,
+                        Highlighted = HighlightMatchedPart(campaign.CampaignSearchString, campaign.MatchedPositionsCampaign),
+                        Score = campaign.CampaignScore,
+                    }
                 };
             })
                 .OrderByDescending(campaign => campaign.OverallScore);
@@ -194,8 +145,10 @@ namespace CQRSMicro.Product.Fuzzy
                     Campaign = campaign,
                     CampaignScore = Fuzz.WeightedRatio(query, CampaignFuzzySearchString(campaign), FuzzySharp.PreProcess.PreprocessMode.Full),
                     BrandScore = Fuzz.WeightedRatio(query, BrandFuzzySearchString(campaign.Brand), FuzzySharp.PreProcess.PreprocessMode.Full),
-                    //CampaignSearchString = CampaignFuzzySearchString(campaign),
-                    //BrandSearchString = BrandFuzzySearchString(campaign.Brand),
+                    HighlightedCampaign = HighlightMatchedPart(CampaignFuzzySearchString(campaign), GetMatchedPositions(query, CampaignFuzzySearchString(campaign))),
+                    HighlightedBrand = HighlightMatchedPart(BrandFuzzySearchString(campaign.Brand), GetMatchedPositions(query, BrandFuzzySearchString(campaign.Brand))),
+                    CampaignSearchString = CampaignFuzzySearchString(campaign),
+                    BrandSearchString = BrandFuzzySearchString(campaign.Brand),
                     //MatchedPositionsCampaign = GetMatchedPositions(query, CampaignFuzzySearchString(campaign)),
                     //MatchedPositionsBrand = GetMatchedPositions(query, BrandFuzzySearchString(campaign.Brand))
                 };
@@ -204,11 +157,16 @@ namespace CQRSMicro.Product.Fuzzy
             {
                 return new SearchSuggestionModel
                 {
-                    Score = Math.Max(item.CampaignScore, item.BrandScore),
-                    Keyword = item.BrandScore >= item.CampaignScore ? item.Campaign.Brand.Name : item.Campaign.Title
+                    Keyword = item.BrandScore >= item.CampaignScore ? item.Campaign.Brand.Name : item.Campaign.Title,
+                    SearchResult = new SearchResult
+                    {
+                        Score = Math.Max(item.CampaignScore, item.BrandScore),
+                        Highlighted = item.BrandScore >= item.CampaignScore ? item.HighlightedBrand : item.HighlightedCampaign,
+                        SearchString = item.BrandScore >= item.CampaignScore ? item.BrandSearchString : item.CampaignSearchString
+                    }
                 };
             })
-                .OrderByDescending(campaign => campaign.Score);
+                .OrderByDescending(campaign => campaign.SearchResult.Score);
             return campaigns;
         }
         private static IEnumerable<SearchResultModel> SearchFromCampaigns(List<Campaign> campaignList, string query)
