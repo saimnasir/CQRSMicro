@@ -14,9 +14,23 @@
     }
     public class SearchResultModel
     {  
+        public int BrandScore { get; set; }
         public int Score { get; set; }
         public int BrandId { get; set; }
         public Campaign Campaign { get; set; } = new();
-        public DataType DataType { get; set; }
+        public string Highlighted { get; set; } = string.Empty;
+        public List<int> MatchedPositions { get;   set; }
+        public string DataType { get;  set; }
+    }
+    public class SearchResultModelV2
+    {
+        public int BrandScore { get; set; }
+        public int CampaignScore { get; set; } 
+        public int OverallScore { get; set; } 
+        public Campaign Campaign { get; set; } = new();
+        public string HighlightedCampaign { get; set; } = string.Empty;
+        public string HighlightedBrand { get; set; } = string.Empty;
+        public List<int> MatchedPositionsBrand { get; set; }
+        public List<int> MatchedPositionsCampaign { get; set; } 
     }
 }
