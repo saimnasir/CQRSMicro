@@ -31,6 +31,11 @@
         public string HighlightedCampaign { get; set; } = string.Empty;
         public string HighlightedBrand { get; set; } = string.Empty;
         public List<int> MatchedPositionsBrand { get; set; }
-        public List<int> MatchedPositionsCampaign { get; set; } 
+        public List<int> MatchedPositionsCampaign { get; set; }
     }
+    public class SearchSuggestionModel
+    {
+        public int  Score { get; set; }
+        public string Keyword { get; set; } = string.Empty;
+    } 
 }

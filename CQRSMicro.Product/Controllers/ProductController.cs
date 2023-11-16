@@ -64,6 +64,14 @@ namespace CQRSMicro.Product.Controllers
             return Ok(new { Items =response , Count = response .Count()});
         }
         
+        [HttpGet("FuzzySharpSearchCampaign/Suggestions")]
+        public async Task<IActionResult> Suggestions([FromQuery] string key)
+        {
+            var fuzzy = new FuzzySharpSearchCampaign();
+            var response = fuzzy.Suggestions(key);
+            return Ok(new { Items =response , Count = response .Count()});
+        }  
+
         [HttpGet("FuzzySharpSearchCampaign/SearchAllCampaignsV2")]
         public async Task<IActionResult> SearchAllCampaignsV2([FromQuery] string key)
         {
